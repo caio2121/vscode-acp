@@ -14,7 +14,7 @@ import { log, logError, disposeChannels, getOutputChannel, getTrafficChannel } f
 import { initTelemetry, sendEvent } from './utils/TelemetryManager';
 
 export function activate(context: vscode.ExtensionContext): void {
-  log('ACP Client extension activating...');
+  log('Caio OpenCode ACP extension activating...');
 
   // --- Telemetry ---
   const telemetryReporter = initTelemetry();
@@ -143,15 +143,13 @@ export function activate(context: vscode.ExtensionContext): void {
     }
 
     try {
-      await vscode.window.withProgress(
+      return await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
           title: `Connecting to ${agentName}...`,
           cancellable: false,
         },
-        async () => {
-          await sessionManager.connectToAgent(agentName!);
-        },
+        async () => sessionManager.connectToAgent(agentName!),
       );
     } catch (e: any) {
       logError('Failed to connect to agent', e);
@@ -212,7 +210,14 @@ export function activate(context: vscode.ExtensionContext): void {
   });
 
   // Send Prompt (from keybinding — just focus chat)
-  const sendPromptCmd = vscode.commands.registerCommand('acp.sendPrompt', async () => {
+  const sendPromptCmd = vscode.commands.registerCommand('acp.sendPrompt', async (text?: string) => {
+    if (typeof text === 'string' && text.trim()) {
+      const activeId = sessionManager.getActiveSessionId();
+      if (!activeId) {
+        throw new Error('No ACP session is connected.');
+      }
+      return sessionManager.sendPrompt(activeId, text);
+    }
     vscode.commands.executeCommand('acp-chat.focus');
   });
 
@@ -530,10 +535,10 @@ export function activate(context: vscode.ExtensionContext): void {
     },
   );
 
-  sendEvent('extension/activated', { version: vscode.extensions.getExtension('formulahendry.acp-client')?.packageJSON?.version ?? 'unknown' });
-  log('ACP Client extension activated.');
+  sendEvent('extension/activated', { version: vscode.extensions.getExtension('caio2121.caio-opencode-acp')?.packageJSON?.version ?? 'unknown' });
+  log('Caio OpenCode ACP extension activated.');
 }
 
 export function deactivate(): void {
-  log('ACP Client extension deactivated.');
+  log('Caio OpenCode ACP extension deactivated.');
 }

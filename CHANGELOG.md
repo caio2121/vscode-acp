@@ -1,6 +1,13 @@
-# Change Log
+# Change Log — Caio OpenCode ACP
 
-All notable changes to the "vscode-acp" extension will be documented in this file.
+All notable changes to the "Caio OpenCode ACP" extension will be documented in this file.
+
+## Unreleased
+
+### Changed
+- Rebranded the extension for the `caio2121/vscode-acp` fork.
+- Uses the installed OpenCode CLI and the existing user/project authentication.
+- Removed remote telemetry and added a real OpenCode ACP smoke test.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
@@ -21,7 +28,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Bumped `@agentclientprotocol/sdk` from `^0.14.1` to `^0.21.1`. Migrated `unstable_listSessions` / `unstable_resumeSession` to their stable equivalents.
 
 ### Fixed
-- Agent / model picker labels no longer truncate at 140 px — names display fully and pickers wrap to a second row when the panel is narrow ([#36](https://github.com/formulahendry/vscode-acp/issues/36)).
+- Agent / model picker labels no longer truncate at 140 px — names display fully and pickers wrap to a second row when the panel is narrow.
 - Slash-command autocomplete now appears reliably when the agent advertises commands. Notifications like `available_commands_update` that arrive during session creation are persisted on the session even before `activeSessionId` is set.
 - Per-session state (config options, available commands, title) carries forward correctly when the active session is set after the notification arrives.
 

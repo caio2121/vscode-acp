@@ -1,30 +1,11 @@
 import * as vscode from 'vscode';
-import { TelemetryReporter } from '@vscode/extension-telemetry';
-
-const CONNECTION_STRING = 'InstrumentationKey=c4d676c8-3b21-4047-8f57-804f20ccb62d';
-
-let reporter: TelemetryReporter | undefined;
-
-/** Common properties attached to every telemetry event. */
-function getCommonProperties(): Record<string, string> {
-  return {
-    ideName: vscode.env.appName,
-    ideUriScheme: vscode.env.uriScheme,
-    ideAppHost: vscode.env.appHost,
-  };
-}
 
 /**
- * Initialise the telemetry reporter.  Must be called once during
- * `activate()`.  Returns the reporter so it can be pushed into
- * `context.subscriptions` for automatic disposal.
+ * Keep the existing instrumentation call sites API-compatible without sending
+ * usage data to a third party. Diagnostics stay in the local VS Code log.
  */
-export function initTelemetry(): TelemetryReporter {
-  if (reporter) {
-    return reporter;
-  }
-  reporter = new TelemetryReporter(CONNECTION_STRING);
-  return reporter;
+export function initTelemetry(): vscode.Disposable {
+  return new vscode.Disposable(() => undefined);
 }
 
 /**
@@ -36,7 +17,9 @@ export function sendEvent(
   properties?: Record<string, string>,
   measurements?: Record<string, number>,
 ): void {
-  reporter?.sendTelemetryEvent(eventName, { ...getCommonProperties(), ...properties }, measurements);
+  void eventName;
+  void properties;
+  void measurements;
 }
 
 /**
@@ -48,17 +31,15 @@ export function sendError(
   properties?: Record<string, string>,
   measurements?: Record<string, number>,
 ): void {
-  reporter?.sendTelemetryErrorEvent(eventName, { ...getCommonProperties(), ...properties }, measurements);
+  void eventName;
+  void properties;
+  void measurements;
 }
 
 /**
  * Report an exception / caught error as an error event.
  */
 export function sendException(error: Error, properties?: Record<string, string>): void {
-  reporter?.sendTelemetryErrorEvent('unhandledException', {
-    ...getCommonProperties(),
-    ...properties,
-    errorName: error.name,
-    errorMessage: error.message,
-  });
+  void error;
+  void properties;
 }

@@ -76,7 +76,7 @@ export class ConnectionManager {
     const initResponse = await connection.initialize({
       protocolVersion: PROTOCOL_VERSION,
       clientInfo: {
-        name: 'vscode-acp-client',
+        name: 'caio-opencode-acp',
         version: extensionVersion,
       },
       clientCapabilities: {

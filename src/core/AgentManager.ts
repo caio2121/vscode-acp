@@ -65,6 +65,11 @@ export interface AgentInstance {
   config: AgentConfigEntry;
 }
 
+function isOpenCodeAgent(config: AgentConfigEntry): boolean {
+  const command = config.command.toLowerCase().split(/[\\/]/).pop() || '';
+  return ['opencode', 'opencode.exe', 'opencode.cmd', 'opencode.ps1'].includes(command);
+}
+
 /**
  * Manages spawning and killing ACP agent child processes.
  */
@@ -79,13 +84,25 @@ export class AgentManager extends EventEmitter {
     const id = `agent_${this.nextId++}`;
     log(`Spawning agent "${name}" (${id}): ${config.command} ${(config.args || []).join(' ')}`);
 
+    const env = { ...process.env, ...(config.env || {}) };
+    // The managed Hubia environment may export an incompatible OpenCode
+    // config. Unless the agent explicitly overrides it, let the installed
+    // CLI resolve its normal user/project config and existing credentials.
+    if (isOpenCodeAgent(config)
+      && !('OPENCODE_CONFIG' in (config.env || {}))
+      && !('OPENCODE_CONFIG_DIR' in (config.env || {}))) {
+      delete env.OPENCODE_CONFIG;
+      delete env.OPENCODE_CONFIG_DIR;
+      log('OpenCode: using the installed CLI user/project configuration');
+    }
+
     const child = (() => {
       if (process.platform === 'win32') {
         // On Windows, commands like npx are batch scripts (.cmd) that require
         // shell resolution via cmd.exe.
         return spawn(config.command, config.args || [], {
           stdio: ['pipe', 'pipe', 'pipe'],
-          env: { ...process.env, ...(config.env || {}) },
+          env,
           cwd: cwd || undefined,
           shell: true,
         });
@@ -102,7 +119,7 @@ export class AgentManager extends EventEmitter {
       sendEvent('agent/spawn/shell', { shell: shellName, useLoginFlag: String(useLoginFlag) });
       return spawn(shell, shellArgs, {
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env, ...(config.env || {}) },
+        env,
         cwd: cwd || undefined,
       });
     })();

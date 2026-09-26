@@ -5,7 +5,7 @@ let _trafficChannel: vscode.OutputChannel | undefined;
 
 export function getOutputChannel(): vscode.OutputChannel {
   if (!_outputChannel) {
-    _outputChannel = vscode.window.createOutputChannel('ACP Client');
+    _outputChannel = vscode.window.createOutputChannel('Caio OpenCode ACP');
   }
   return _outputChannel;
 }

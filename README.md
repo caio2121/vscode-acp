@@ -1,166 +1,110 @@
-# ACP Client for VS Code
+# Caio OpenCode ACP
 
-A [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=formulahendry.acp-client) that provides a client for the [Agent Client Protocol (ACP)](https://agentclientprotocol.com/) — connect to any ACP-compatible AI coding agent directly from your editor.
+Uma extensão própria para VS Code que conecta o editor a agentes compatíveis
+com o [Agent Client Protocol (ACP)](https://agentclientprotocol.com/), com o
+[OpenCode](https://opencode.ai/) instalado localmente como integração padrão.
 
-![ACP Client Screenshot](resources/screenshot.png)
+## O que foi personalizado
 
-## Features
+- Identidade `Caio OpenCode ACP`, publisher `caio2121` e metadados apontando
+  para [este fork](https://github.com/caio2121/vscode-acp).
+- Ícones, nomes dos canais de log e textos da extensão próprios.
+- Sem telemetria remota: os diagnósticos ficam somente nos canais locais do
+  VS Code.
+- O agente OpenCode usa o executável instalado (`opencode acp`) e a
+  configuração/autenticação do usuário, em vez de baixar outro CLI via `npx`.
+- `opencode.jsonc` fixa o teste e o uso padrão em `opencode/big-pickle`.
+  Altere esse campo se outro modelo/provider for desejado.
 
-- **Multi-Agent Support**: Connect to 11 pre-configured ACP agents or add your own
-- **Single-Agent Focus**: One agent active at a time — seamlessly switch between agents
-- **Per-Agent Session List**: Each agent in the Agents view is expandable into its previous sessions. Click a session to restore its history in the chat. Backed by `session/list` when the agent supports it, or by a local per-workspace cache otherwise.
-- **Session Config Options**: Dynamic per-session selectors (mode, model, reasoning level, …) advertised by the agent are rendered automatically in the composer toolbar.
-- **Interactive Chat**: Built-in chat panel with Markdown rendering, inline tool call display, and collapsible tool sections
-- **Thinking Display**: See agent reasoning in a collapsible block with streaming animation and elapsed time
-- **Slash Commands**: Autocomplete popup for agent-provided commands with keyboard navigation
-- **Mode & Model Picker**: Switch agent modes and models directly from the chat toolbar (kept for agents that haven't migrated to Session Config Options yet)
-- **File System Integration**: Agents can read and write files in your workspace
-- **Terminal Execution**: Agents can run commands with terminal output display
-- **Permission Management**: Configurable auto-approve policies for agent actions
-- **Protocol Traffic Logging**: Inspect all ACP JSON-RPC messages with request/response/notification labels
-- **Agent Registry**: Browse and discover available ACP agents
-- **Chat Persistence**: Conversations are preserved when switching panels
+## Pré-requisitos
 
-## Quick Start
-
-1. Install: [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=formulahendry.acp-client) | [Open in VS Code](https://vscode.dev/redirect?url=vscode%3Aextension%2Fformulahendry.acp-client) | [Open VSX Marketplace](https://open-vsx.org/extension/formulahendry/acp-client)
-2. Open the ACP Client panel from the Activity Bar (ACP icon)
-3. Click **+** to add an agent configuration, or use the defaults
-4. Click an agent to connect
-5. Start chatting!
-
-## Requirements
-
-- Node.js 18+ (for spawning agent processes)
-- An ACP-compatible agent installed or available via `npx`
-
-## Pre-configured Agents
-
-The extension comes with default configurations for:
-
-| Agent | Command |
-|-------|---------|
-| GitHub Copilot | `npx @github/copilot-language-server@latest --acp` |
-| Claude Code | `npx @agentclientprotocol/claude-agent-acp@latest` |
-| Gemini CLI | `npx @google/gemini-cli@latest --experimental-acp` |
-| Qwen Code | `npx @qwen-code/qwen-code@latest --acp --experimental-skills` |
-| Auggie CLI | `npx @augmentcode/auggie@latest --acp` |
-| Qoder CLI | `npx @qoder-ai/qodercli@latest --acp` |
-| Codex CLI | `npx @zed-industries/codex-acp@latest` |
-| OpenCode | `npx opencode-ai@latest acp` |
-| OpenClaw | `npx openclaw acp` |
-| [Kiro CLI](https://kiro.dev/docs/cli/acp/) | `kiro-cli acp` |
-| [Hermes Agent](https://hermes-agent.nousresearch.com/docs/user-guide/features/acp) | `hermes acp` |
-
-You can add custom agent configurations in settings.
-
-> **Note on Hermes Agent**: Hermes is a Python package, not an npm package. Install it via the [Hermes Quickstart](https://hermes-agent.nousresearch.com/docs/getting-started/quickstart) (Linux/macOS/WSL2 only — Windows requires [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install)). Make sure `hermes` is on your `PATH` and launch VS Code from the same shell/venv. Configure credentials with `hermes model`.
-
-## Extension Settings
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `acp.agents` | *(11 agents)* | Agent configurations. Each key is the agent name, value has `command`, `args`, and `env`. |
-| `acp.autoApprovePermissions` | `ask` | How agent permission requests are handled: `ask` or `allowAll`. |
-| `acp.defaultWorkingDirectory` | `""` | Default working directory for agent sessions. Empty uses current workspace. |
-| `acp.logTraffic` | `true` | Log all ACP protocol traffic to the ACP Traffic output channel. |
-
-## Commands
-
-All commands are accessible via the Command Palette (`Ctrl+Shift+P`):
-
-| Command | Description |
-|---------|-------------|
-| `ACP: Connect to Agent` | Connect to an agent |
-| `ACP: New Conversation` | Start a new conversation with the connected agent |
-| `ACP: Send Prompt` | Send a message to the agent |
-| `ACP: Cancel Current Turn` | Cancel the current agent turn |
-| `ACP: Disconnect Agent` | Disconnect from the current agent |
-| `ACP: Restart Agent` | Restart the current agent process |
-| `ACP: Open Chat Panel` | Focus the chat webview |
-| `ACP: Add Agent Configuration` | Add a new agent to settings |
-| `ACP: Remove Agent` | Remove an agent configuration |
-| `ACP: Set Agent Mode` | Change the agent's operating mode |
-| `ACP: Set Agent Model` | Change the agent's model |
-| `ACP: Refresh Sessions` | Re-fetch the session list for an agent (also on the agent's right-click menu) |
-| `ACP: Show Log` | Open the ACP Client log output channel |
-| `ACP: Show Protocol Traffic` | Open the ACP Traffic output channel |
-| `ACP: Browse Agent Registry` | Browse the ACP agent registry |
-
-## Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+Shift+A` (`Cmd+Shift+A` on Mac) | Open Chat Panel |
-| `Escape` (when turn in progress) | Cancel Current Turn |
-
-## Development
-
-### Prerequisites
-
-- Node.js 18+
-- VS Code 1.85+
-
-### Setup
+- Node.js 18+;
+- VS Code 1.85+;
+- `opencode` disponível no `PATH`;
+- uma instalação funcional do OpenCode. Se escolher um provider que exige
+  login, confira apenas os nomes/tipos das credenciais com:
 
 ```bash
-git clone https://github.com/formulahendry/vscode-acp.git
-cd vscode-acp
-npm install
+opencode auth list
 ```
 
-### Build & Run
+O arquivo de credenciais não faz parte deste repositório e nunca deve ser
+copiado para ele.
+
+## Configuração e execução
 
 ```bash
-npm run compile    # One-time build
-npm run watch      # Watch mode for development
+npm ci
+npm run compile
 ```
 
-Press `F5` in VS Code to launch the Extension Development Host.
+Pressione `F5` no VS Code para abrir o Extension Development Host. Abra o
+painel **Caio ACP**, selecione **OpenCode** e envie uma mensagem.
 
-### Testing
+O projeto mantém os demais agentes ACP pré-configurados. Eles continuam
+disponíveis pelo ajuste `acp.agents`; o agente OpenCode padrão é:
+
+```json
+{
+  "command": "opencode",
+  "args": ["acp"],
+  "env": {}
+}
+```
+
+Quando o ambiente exporta `OPENCODE_CONFIG`/`OPENCODE_CONFIG_DIR` para uma
+configuração incompatível, a extensão remove essas duas variáveis somente para
+o agente OpenCode, a menos que sejam definidas explicitamente no agente do
+usuário. Assim o CLI usa a configuração normal do usuário/projeto e a
+autenticação já instalada.
+
+## Verificação ponta a ponta do OpenCode
+
+Este smoke test inicia o processo ACP real, faz `initialize`, cria uma sessão,
+envia uma requisição real e valida o texto retornado:
 
 ```bash
-npm run pretest    # Compile tests + lint
-npm test           # Run tests
+npm run smoke:opencode
 ```
 
-### Packaging
+Ele imprime `SMOKE_RESULT=PASS`, o agente/protocolo/modelo observados e a
+resposta recebida. Não usa mock nem imprime credenciais.
+
+Para executar também o round-trip dentro do Extension Development Host:
 
 ```bash
-npm run package    # Production build
-npx @vscode/vsce package   # Create .vsix
+# PowerShell
+$env:CAIO_ACP_E2E = "1"; npm test
 ```
 
-## Architecture
+## Testes e empacotamento
 
-The extension follows a modular architecture:
+```bash
+npm run lint
+npm run compile
+npm test
+npm run package
+npx @vscode/vsce package
+```
 
-- **Core**: `AgentManager`, `ConnectionManager`, `SessionManager`, `AcpClientImpl`
-- **Handlers**: `FileSystemHandler`, `TerminalHandler`, `PermissionHandler`, `SessionUpdateHandler`
-- **UI**: `SessionTreeProvider`, `ChatWebviewProvider`, `StatusBarManager`
-- **Config**: `AgentConfig`, `RegistryClient`
-- **Utils**: `Logger`, `StreamAdapter`
+Para revisar o protocolo ACP durante uma sessão, use os comandos **Caio ACP:
+Show Log** e **Caio ACP: Show Protocol Traffic**.
 
-Communication with agents uses the ACP protocol (JSON-RPC 2.0 over stdio).
+## Arquitetura
 
-## Known Issues
+- **Core**: `AgentManager`, `ConnectionManager`, `SessionManager` e
+  `AcpClientImpl`;
+- **Handlers**: filesystem, terminal, permissões e atualizações de sessão;
+- **UI**: árvore de agentes, chat webview e barra de status;
+- **Config**: agentes configuráveis e registry ACP;
+- **Diagnóstico**: canais locais de log e tráfego JSON-RPC.
 
-- Agents must be available via the system PATH or `npx`
-- Some agents may require additional authentication setup
-- File attachment feature is not yet functional
+A comunicação com os agentes usa JSON-RPC 2.0 sobre stdio, conforme ACP.
 
-## Links
+## Créditos e licença
 
-- [ACP Client on Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=formulahendry.acp-client)
-- [Agent Client Protocol](https://agentclientprotocol.com/)
-- [GitHub Repository](https://github.com/formulahendry/vscode-acp)
-
-## Related Projects
-
-- [ACP UI](https://github.com/formulahendry/acp-ui) — A modern, cross-platform desktop client for the Agent Client Protocol (ACP)
-- [WeChat ACP](https://github.com/formulahendry/wechat-acp) — Bridge WeChat chat messages to any ACP-compatible AI agent (Claude, Codex, Copilot, Qwen, Gemini, OpenCode and more)
-
-## License
-
-MIT — see [LICENSE](LICENSE) for details.
+Este projeto é um fork independente de
+[`formulahendry/vscode-acp`](https://github.com/formulahendry/vscode-acp).
+Os créditos e o aviso de copyright do autor original foram preservados em
+[`LICENSE`](LICENSE), conforme a licença MIT. As alterações próprias estão
+descritas acima e no histórico do repositório.

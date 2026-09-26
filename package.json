@@ -1,19 +1,18 @@
 {
-  "name": "acp-client",
-  "displayName": "ACP Client",
-  "description": "Agent Client Protocol client for VS Code — connect to GitHub Copilot, Claude Code, Gemini CLI, Qwen Code, Codex CLI, OpenCode, OpenClaw, Kiro CLI, Hermes Agent, and any ACP-compatible AI coding agent",
+  "name": "caio-opencode-acp",
+  "displayName": "Caio OpenCode ACP",
+  "description": "A personal Agent Client Protocol client for VS Code with a first-class OpenCode integration",
   "version": "0.2.0",
-  "publisher": "formulahendry",
+  "publisher": "caio2121",
   "license": "MIT",
   "icon": "resources/icon.png",
   "bugs": {
-    "url": "https://github.com/formulahendry/vscode-acp/issues",
-    "email": "formulahendry@gmail.com"
+    "url": "https://github.com/caio2121/vscode-acp/issues"
   },
-  "homepage": "https://github.com/formulahendry/vscode-acp/blob/main/README.md",
+  "homepage": "https://github.com/caio2121/vscode-acp/blob/main/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/formulahendry/vscode-acp.git"
+    "url": "https://github.com/caio2121/vscode-acp.git"
   },
   "engines": {
     "vscode": "^1.85.0"
@@ -35,14 +34,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "acp-client",
-          "title": "ACP Client",
+            "id": "caio-acp",
+          "title": "Caio ACP",
           "icon": "resources/icon.svg"
         }
       ]
     },
     "views": {
-      "acp-client": [
+      "caio-acp": [
         {
           "id": "acp-sessions",
           "name": "Agents",
@@ -275,7 +274,7 @@
       }
     ],
     "configuration": {
-      "title": "ACP Client",
+      "title": "Caio OpenCode ACP",
       "properties": {
         "acp.agents": {
           "type": "object",
@@ -339,9 +338,8 @@
               "env": {}
             },
             "OpenCode": {
-              "command": "npx",
+              "command": "opencode",
               "args": [
-                "opencode-ai@latest",
                 "acp"
               ],
               "env": {}
@@ -401,11 +399,11 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "lint": "eslint src --max-warnings 0",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "smoke:opencode": "node scripts/smoke-opencode.cjs"
   },
   "dependencies": {
     "@agentclientprotocol/sdk": "^0.21.1",
-    "@vscode/extension-telemetry": "^1.5.0",
     "marked": "^15.0.0"
   },
   "devDependencies": {
